@@ -1,0 +1,27 @@
+[
+  {
+    "collection": "jobs",
+    "as": "j",
+    "data": {
+      "title": "Учебная вакансия",
+      "company": "Пример",
+      "url": "https://example.org/job/2",
+      "stage": "saved"
+    }
+  },
+  {
+    "collection": "tasks",
+    "data": {
+      "job": "$j",
+      "action": "Проверить требования",
+      "due": "2026-10-25",
+      "status": "open"
+    }
+  },
+  {
+    "collection": "jobs",
+    "id": "$j",
+    "operation": "archive",
+    "error": "открытые"
+  }
+]

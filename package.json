@@ -1,0 +1,14 @@
+{
+  "name": "routeboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Личный журнал вакансий, этапов и следующих действий. Отправка откликов остаётся отдельным действием человека.",
+  "engines": {
+    "node": ">=24.15 <25"
+  },
+  "scripts": {
+    "start": "node start.js",
+    "test": "node --test tests/*.test.js"
+  }
+}
