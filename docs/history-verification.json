@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-25",
+  "product": "routeboard",
+  "baseline_commit": "4e9e157e6ccf21bbcbdb41ac6bd13ca7ddaabbfc",
+  "defect": "Completed-action editor omitted saved archived vacancy;required selector became empty and browser blocked saving",
+  "before_fix": {
+    "selector": {
+      "missing": true,
+      "options": [
+        "Выберите значение",
+        "SYNTHETIC live role"
+      ],
+      "value": ""
+    },
+    "baseline_lifecycle_controls_passed": 2,
+    "controls_note": "Archive/open/reopen/retarget guards and history/persistence already worked. New lifecycle controls passed baseline;not newly fixed server defects."
+  },
+  "policy": "Retain current archived vacancy with Archive label;do not offer another archived vacancy or archives in new action form. Domain/server/schema unchanged.",
+  "tests": {
+    "passed": 6,
+    "failed": 0,
+    "runtime": "v24.19.0",
+    "log": "docs/test-output.txt",
+    "lifecycle": "tests/history.test.js",
+    "coverage": [
+      "completed text/due edit preserves original vacancy/done",
+      "new/reopened/retargeted open action against archived vacancy rejected with full state/audit unchanged",
+      "file restart and empty restore preserve history/reopening guard",
+      "original unique-URL/auth/CSRF/Origin/cookie/conflict checks retained"
+    ]
+  },
+  "browser": {
+    "data": "synthetic only,localhost8836",
+    "selector_after": {
+      "missing": false,
+      "options": [
+        "Выберите значение",
+        "SYNTHETIC archived role · Архив",
+        "SYNTHETIC live role"
+      ],
+      "selected": "SYNTHETIC archived role · Архив",
+      "value": "8f21fc25-57dc-4cec-b843-62388e059b2d"
+    },
+    "existing_api_guards": {
+      "existing_controls_not_new_server_fix": true,
+      "all4_rejections_preserved_entire_state_and_audit": true,
+      "revision": 8,
+      "audit_events": 8,
+      "results": [
+        {
+          "kind": "new_open",
+          "status": 400,
+          "error": "Сначала завершите открытые действия перед архивированием вакансии."
+        },
+        {
+          "kind": "new_open",
+          "status": 400,
+          "error": "Сначала завершите открытые действия перед архивированием вакансии."
+        },
+        {
+          "kind": "reopen_done",
+          "status": 400,
+          "error": "Сначала завершите открытые действия перед архивированием вакансии."
+        },
+        {
+          "kind": "retarget_open",
+          "status": 400,
+          "error": "Сначала завершите открытые действия перед архивированием вакансии."
+        }
+      ]
+    },
+    "reopen_rejection": {
+      "all_data_unchanged": true,
+      "reopen_rejected": true,
+      "revision": 8,
+      "audit_events": 8
+    },
+    "saved_and_reloaded": {
+      "saved_archived_vacancy_retained": true,
+      "completed_action_text_and_due_saved": true,
+      "done_status_unchanged": true,
+      "other_archived_vacancy_not_offered": true,
+      "new_form_only_live_vacancies": true,
+      "all_jobs_and_previous_open_action_unchanged": true,
+      "new_open_action_saved": true,
+      "reload_three_actions": true,
+      "revision": 10,
+      "audit_events": 10
+    },
+    "screens": [
+      "docs/before-missing-job.jpg",
+      "docs/archive-selected.jpg",
+      "docs/reopen-rejected.jpg",
+      "docs/history-and-live-actions.jpg"
+    ]
+  },
+  "runtime": {
+    "main_pid": 88044,
+    "restarted": false,
+    "evidence": "work/program/runtime-checks/routeboard-history-20261025",
+    "reason": "Static app.js only,served hash equals new local file,no-cache;18 workspace payload/revision/audit unchanged"
+  },
+  "limits": [
+    "Done and job stages are manual marks,not proof of application submission/interview/employment",
+    "No automatic applications,job aggregation,client isolation or hosted SaaS",
+    "No fresh whole-interface/security audit or customer acceptance"
+  ]
+}

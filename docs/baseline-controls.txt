@@ -1,0 +1,10 @@
+✔ completed action retains archived vacancy while new/reopened/retargeted open actions remain rejected (19.923416ms)
+✔ file restart and empty restore preserve vacancy/action history and reopening guard (3.879334ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.251584

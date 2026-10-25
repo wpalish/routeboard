@@ -1,34 +1,46 @@
 TAP version 13
-# Subtest: RouteBoard: complete original workflow, calculation and rejected invalid transition
-ok 1 - RouteBoard: complete original workflow, calculation and rejected invalid transition
+# Subtest: completed action retains archived vacancy while new/reopened/retargeted open actions remain rejected
+ok 1 - completed action retains archived vacancy while new/reopened/retargeted open actions remain rejected
   ---
-  duration_ms: 2.465167
+  duration_ms: 3.494542
+  type: 'test'
+  ...
+# Subtest: file restart and empty restore preserve vacancy/action history and reopening guard
+ok 2 - file restart and empty restore preserve vacancy/action history and reopening guard
+  ---
+  duration_ms: 4.689792
+  type: 'test'
+  ...
+# Subtest: RouteBoard: complete original workflow, calculation and rejected invalid transition
+ok 3 - RouteBoard: complete original workflow, calculation and rejected invalid transition
+  ---
+  duration_ms: 2.43425
   type: 'test'
   ...
 # Subtest: real file restart, optimistic conflict and validated restore into an empty database
-ok 2 - real file restart, optimistic conflict and validated restore into an empty database
+ok 4 - real file restart, optimistic conflict and validated restore into an empty database
   ---
-  duration_ms: 3.433625
+  duration_ms: 2.934
   type: 'test'
   ...
 # Subtest: HTTP prevents anonymous reads and cross-origin/CSRF writes while authenticated workflow saves
-ok 3 - HTTP prevents anonymous reads and cross-origin/CSRF writes while authenticated workflow saves
+ok 5 - HTTP prevents anonymous reads and cross-origin/CSRF writes while authenticated workflow saves
   ---
-  duration_ms: 73.783292
+  duration_ms: 70.472833
   type: 'test'
   ...
 # Subtest: two products on one host use isolated session cookies and preserve both logins
-ok 4 - two products on one host use isolated session cookies and preserve both logins
+ok 6 - two products on one host use isolated session cookies and preserve both logins
   ---
-  duration_ms: 88.31075
+  duration_ms: 88.286917
   type: 'test'
   ...
-1..4
-# tests 4
+1..6
+# tests 6
 # suites 0
-# pass 4
+# pass 6
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 212.25575
+# duration_ms 209.352417
