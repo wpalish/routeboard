@@ -1,3 +1,4 @@
+import {productView} from './product-view.js';
 import {workspaceGuide,recordSummary,emptyRecords,labelTable} from './workspace-guide.js';
 const journey={"title": "От вакансии к следующему действию", "description": "Сохраните вакансию и источник, выберите фактический этап и назначьте следующий шаг.", "steps": [{"key": "jobs", "description": "Запишите должность, компанию, ссылку и фактический этап. Это личный журнал вакансий."}, {"key": "tasks", "description": "Выберите вакансию, действие и срок. Отметка в журнале не отправляет отклик работодателю."}]};
 const screen = document.getElementById("screen"),
@@ -23,13 +24,13 @@ function message(text, error = false) {
 }
 async function run(fn, button) {
   message("");
-  if (button) button.disabled = true;
+  if (button) {button.disabled = true;button.setAttribute("aria-busy","true");}
   try {
     await fn();
   } catch (e) {
     message(e.message, true);
   } finally {
-    if (button) button.disabled = false;
+    if (button) {button.disabled = false;button.removeAttribute("aria-busy");}
   }
 }
 function button(label, fn, cls = "secondary") {
@@ -151,24 +152,27 @@ async function load() {
 function render() {
   chrome();
   const c = config.collections.find((x) => x.key === active);
-  screen.replaceChildren(
-    E("h1", c.title),
-    E("p", c.description || config.description),
-  );
+  const heading = E("div", undefined, "section-heading"),
+    copy = E("div", undefined, "section-copy");
+  copy.append(E("h1", c.title), E("p", active === "jobs"
+    ? "Источник, ручной этап и следующий шаг по каждой вакансии."
+    : "Открытые действия и завершённая история с точными сроками."));
+  screen.replaceChildren(heading);
   const controls = E("div", undefined, "actions");
   if (!c.createDisabled && (c.writeRole !== "admin" || user.role === "admin"))
     controls.append(
       button(c.addLabel || "Добавить запись", () => edit(c), "primary"),
     );
   controls.append(button("Обновить", load));
-  screen.append(controls);
-  const search = E("div", undefined, "search-tools");
-  const q = input(search, "search", "Поиск по записям", query, "search", false);
+  heading.append(copy, controls);
+  const search = E("div", undefined, "search-tools"),
+    searchField = E("div", undefined, "search-field");
+  const q = input(searchField, "search", "Поиск по записям", query, "search", false);
   q.addEventListener("input", () => {
     query = q.value;
     renderRows();
   });
-  const archivedLabel = E("label", "Показать архив"),
+  const archivedLabel = E("label", "Показать архив", "archive-toggle"),
     toggle = E("input");
   toggle.type = "checkbox";
   toggle.checked = showArchived;
@@ -178,14 +182,14 @@ function render() {
     renderRows();
   });
   archivedLabel.prepend(toggle);
-  search.append(archivedLabel);
+  search.append(searchField, archivedLabel);
   screen.append(search);
   const holder = E("section");
   holder.id = "records";
   screen.append(holder);
   renderRows();
-  const summary = E("section");
-  summary.append(E("h2", "Расчёт и контроль"));
+  const summary = E("details",undefined,"secondary-summary");
+  summary.append(E("summary", "Сводка сохранённых этапов и действий"));
   for (const block of state.computed || []) {
     const entry = E("div", undefined, "entry");
     entry.append(E("h3", block.title));
@@ -259,6 +263,7 @@ function renderRows() {
     emptyRecords(host,{config,state,active,query,journey,navigate,create:()=>edit(c),clear:()=>{query='';showArchived=true;render();},canCreate:!c.createDisabled&&(!c.writeRole||user.role==='admin')});
     return;
   }
+  if(productView(host,{active,values,state,onVisibleCount:(shown,matched)=>recordSummary(host,shown,state.data[active].length,{matched}),onOpen:(key,row)=>edit(config.collections.find(c=>c.key===key),row),onCreate:(key,defaults)=>edit(config.collections.find(c=>c.key===key),undefined,defaults)}))return;
   const wrap = E("div", undefined, "table-wrap"),
     table = E("table"),
     head = E("thead"),
@@ -314,7 +319,8 @@ function renderRows() {
   );
   labelTable(host);
 }
-function edit(c, row) {
+function edit(c, row, defaults = {}) {
+  const formRevision = state.revision;
   screen.replaceChildren(
     E("h1", row ? "Изменить: " + c.title : c.addLabel || "Новая запись"),
     E(
@@ -325,7 +331,7 @@ function edit(c, row) {
   );
   const form = E("form", undefined, "panel");
   for (const field of c.fields) {
-    let value = row?.[field.key] ?? field.default ?? "";
+    let value = row?.[field.key] ?? defaults[field.key] ?? field.default ?? "";
     if (["select", "reference"].includes(field.type)) {
       const label = E("label", field.label),
         select = E("select");
@@ -441,7 +447,7 @@ function edit(c, row) {
           operation: "archive",
           collection: c.key,
           id: row.id,
-          revision: state.revision,
+          revision: formRevision,
         });
         render();
       }),
@@ -463,7 +469,7 @@ function edit(c, row) {
         operation: "save",
         collection: c.key,
         id: row?.id,
-        revision: state.revision,
+        revision: formRevision,
         data,
       });
       render();

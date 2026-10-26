@@ -31,19 +31,28 @@ export function workspaceGuide(screen, { config, state, active, journey, navigat
   if (current && matchMedia('(max-width: 600px)').matches)
     navigation.scrollLeft = current.offsetLeft - navigation.offsetLeft - (navigation.clientWidth - current.clientWidth) / 2;
   if (previous) previous.replaceWith(guide);
-  else screen.insertBefore(guide, screen.children[2] || null);
+  else {
+    const records = screen.querySelector('#records');
+    if (records) records.after(guide);
+    else screen.append(guide);
+  }
 }
 
-export function recordSummary(host, shown, total) {
+export function recordSummary(host, shown, total, {matched} = {}) {
   let counter = document.getElementById('record-count');
   if (!counter) {
     counter = node('p', undefined, 'record-count');
     counter.id = 'record-count';
     counter.setAttribute('role', 'status');
     counter.setAttribute('aria-live', 'polite');
-    host.before(counter);
+    const rail = host.parentElement.querySelector('.search-tools');
+    if (rail) rail.append(counter);
+    else host.before(counter);
   }
-  counter.textContent = `Показано: ${shown} из ${total}`;
+  counter.classList.toggle('record-count-scoped', matched !== undefined);
+  counter.textContent = matched === undefined
+    ? `Показано: ${shown} из ${total}`
+    : `Показано: ${shown} · поиск/архив: ${matched} · всего: ${total}`;
 }
 
 export function emptyRecords(host, {config, state, active, query, journey, create, clear, navigate, canCreate}) {
